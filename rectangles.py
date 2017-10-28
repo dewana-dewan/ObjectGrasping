@@ -1,4 +1,5 @@
 import cv2
+import copy
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -21,6 +22,7 @@ def plot_rectangles(file_name, img):
 				cv2.polylines(img, [pts], True, (100,0,0), 1)
 				pts = np.array([], np.int32)
 			cnt += 1
+	return img
 	
 
 img = cv2.imread('pcd0312r.png')
@@ -29,11 +31,13 @@ blurred = cv2.GaussianBlur(gray, (3, 3), 0)
 
 bw_edges = cv2.Canny(gray,50,100)
 
-plot_rectangles('pcd0312cpos.txt', bw_edges)
-#plot_rectangles('pcd0312cneg.txt', bw_edges)
+pos_rect = plot_rectangles('pcd0312cpos.txt', copy.copy(bw_edges))
+neg_rect = plot_rectangles('pcd0312cneg.txt', copy.copy(bw_edges))
 
-plt.subplot(111),plt.imshow(bw_edges)
-plt.title('Blurred Image edges'), plt.xticks([]), plt.yticks([])
+plt.subplot(121),plt.imshow(pos_rect)
+plt.title('Positive rectangles'), plt.xticks([]), plt.yticks([])
+plt.subplot(122),plt.imshow(neg_rect)
+plt.title('Negative Rectangles'), plt.xticks([]), plt.yticks([])
 
 plt.show()
 
