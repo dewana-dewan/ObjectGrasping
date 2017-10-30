@@ -25,14 +25,14 @@ def plot_rectangles(file_name, img):
 	return img
 	
 
-img = cv2.imread('pcd0312r.png')
+img = cv2.imread('./samples/pcd0312r.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 blurred = cv2.GaussianBlur(gray, (3, 3), 0)
 
 bw_edges = cv2.Canny(gray,50,100)
 
-pos_rect = plot_rectangles('pcd0312cpos.txt', copy.copy(bw_edges))
-neg_rect = plot_rectangles('pcd0312cneg.txt', copy.copy(bw_edges))
+pos_rect = plot_rectangles('./samples/pcd0312cpos.txt', copy.copy(bw_edges))
+neg_rect = plot_rectangles('./samples/pcd0312cneg.txt', copy.copy(bw_edges))
 
 plt.subplot(121),plt.imshow(pos_rect)
 plt.title('Positive rectangles'), plt.xticks([]), plt.yticks([])

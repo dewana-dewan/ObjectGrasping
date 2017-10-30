@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-img = cv2.imread('pcd0312r.png',0)
+img = cv2.imread('samples/pcd0312r.png',0)
 
 kernel = np.ones((5,5),np.float32)/25
 img = cv2.filter2D(img,-1,kernel)
