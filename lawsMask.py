@@ -72,15 +72,41 @@ def applyLawsMask (Y) :
     R5S5 = cv2.filter2D(Y,-1,(R5@np.transpose(S5)))
     #R5S5 = R5S5 + cv2.filter2D(R5S5,-1,kernel)
 
-    imgs.append ((E5L5 + L5E5)/2);
-    imgs.append ((R5L5 + L5R5)/2);
-    imgs.append ((E5S5 + S5E5)/2);
-    imgs.append (S5S5);
-    imgs.append (R5R5);
-    imgs.append ((L5S5 + S5L5)/2);
-    imgs.append (E5E5)
-    imgs.append ((R5E5 + E5R5)/2);
-    imgs.append ((S5R5 + R5S5)/2);
+    image = (E5L5 + L5E5)/2
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = (R5L5 + L5R5)/2
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = (E5S5 + S5E5)/2
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = S5S5/1.0
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = R5R5/1.0
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = (L5S5 + S5L5)/2
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = E5E5/1.0
+    image *= 255.0/image.max();
+    imgs.append (image)
+
+    image = (R5E5 + E5R5)/2
+    image *= 255.0/image.max();
+    imgs.append (image);
+
+    image = (S5R5 + R5S5)/2
+    image *= 255.0/image.max();
+    imgs.append (image);
 
     return imgs
 
