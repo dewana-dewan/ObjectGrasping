@@ -28,59 +28,59 @@ def applyLawsMask (Y) :
     kernel = np.ones((15,15),np.float32)/225
     #L5E5
     L5E5 = cv2.filter2D(Y,-1,(L5@np.transpose(E5)))
-    L5E5 = L5E5 + cv2.filter2D(L5E5,-1,kernel)
+    #L5E5 = L5E5 + cv2.filter2D(L5E5,-1,kernel)
     #E5L5
     E5L5 = cv2.filter2D(Y,-1,(E5@np.transpose(L5)))
-    E5L5 = E5L5 + cv2.filter2D(E5L5,-1,kernel)
+    #E5L5 = E5L5 + cv2.filter2D(E5L5,-1,kernel)
     #L5R5
     L5R5 = cv2.filter2D(Y,-1,(L5@np.transpose(R5)))
-    L5R5 = L5R5 + cv2.filter2D(L5R5,-1,kernel)
+    #L5R5 = L5R5 + cv2.filter2D(L5R5,-1,kernel)
     #R5L5
     R5L5 = cv2.filter2D(Y,-1,(R5@np.transpose(L5)))
-    R5L5 = R5L5 + cv2.filter2D(R5L5,-1,kernel)
+    #R5L5 = R5L5 + cv2.filter2D(R5L5,-1,kernel)
     #E5S5
     E5S5 = cv2.filter2D(Y,-1,(E5@np.transpose(S5)))
-    E5S5 = E5S5 + cv2.filter2D(E5S5,-1,kernel)
+    #E5S5 = E5S5 + cv2.filter2D(E5S5,-1,kernel)
     #S5E5
     S5E5 = cv2.filter2D(Y,-1,(S5@np.transpose(E5)))
-    S5E5 = S5E5 + cv2.filter2D(S5E5,-1,kernel)
+    #S5E5 = S5E5 + cv2.filter2D(S5E5,-1,kernel)
     #S5S5
     S5S5 = cv2.filter2D(Y,-1,(S5@np.transpose(S5)))
-    S5S5 = S5S5 + cv2.filter2D(S5S5,-1,kernel)
+    #S5S5 = S5S5 + cv2.filter2D(S5S5,-1,kernel)
     #R5R5
     R5R5 = cv2.filter2D(Y,-1,(R5@np.transpose(R5)))
-    R5R5 = R5R5 + cv2.filter2D(R5R5,-1,kernel)
+    #R5R5 = R5R5 + cv2.filter2D(R5R5,-1,kernel)
     #L5S5
     L5S5 = cv2.filter2D(Y,-1,(L5@np.transpose(S5)))
-    L5S5 = L5S5 + cv2.filter2D(L5S5,-1,kernel)
+    #L5S5 = L5S5 + cv2.filter2D(L5S5,-1,kernel)
     #S5L5
     S5L5 = cv2.filter2D(Y,-1,(S5@np.transpose(L5)))
-    S5L5 = S5L5 + cv2.filter2D(S5L5,-1,kernel)
+    #S5L5 = S5L5 + cv2.filter2D(S5L5,-1,kernel)
     #E5E5
     E5E5 = cv2.filter2D(Y,-1,(E5@np.transpose(E5)))
-    L5E5 = L5E5 + cv2.filter2D(L5E5,-1,kernel)
+    #L5E5 = L5E5 + cv2.filter2D(L5E5,-1,kernel)
     #E5R5
     E5R5 = cv2.filter2D(Y,-1,(E5@np.transpose(R5)))
-    E5R5 = E5R5 + cv2.filter2D(E5R5,-1,kernel)
+    #E5R5 = E5R5 + cv2.filter2D(E5R5,-1,kernel)
     #R5E5
     R5E5 = cv2.filter2D(Y,-1,(R5@np.transpose(E5)))
-    R5E5 = R5E5 + cv2.filter2D(R5E5,-1,kernel)
+    #R5E5 = R5E5 + cv2.filter2D(R5E5,-1,kernel)
     #S5R5
     S5R5 = cv2.filter2D(Y,-1,(S5@np.transpose(R5)))
-    S5R5 = S5R5 + cv2.filter2D(S5R5,-1,kernel)
+    #S5R5 = S5R5 + cv2.filter2D(S5R5,-1,kernel)
     #R5S5
     R5S5 = cv2.filter2D(Y,-1,(R5@np.transpose(S5)))
-    R5S5 = R5S5 + cv2.filter2D(R5S5,-1,kernel)
+    #R5S5 = R5S5 + cv2.filter2D(R5S5,-1,kernel)
 
-    imgs.append (E5L5);
-    imgs.append (R5L5);
-    imgs.append (E5S5);
+    imgs.append ((E5L5 + L5E5)/2);
+    imgs.append ((R5L5 + L5R5)/2);
+    imgs.append ((E5S5 + S5E5)/2);
     imgs.append (S5S5);
     imgs.append (R5R5);
-    imgs.append (L5S5);
+    imgs.append ((L5S5 + S5L5)/2);
     imgs.append (E5E5)
-    imgs.append (R5E5);
-    imgs.append (S5R5);
+    imgs.append ((R5E5 + E5R5)/2);
+    imgs.append ((S5R5 + R5S5)/2);
 
     return imgs
 
@@ -95,7 +95,7 @@ rows, cols, channel = imgYCC.shape
 
 Y, Cr, Cb = cv2.split(imgYCC)
 #Filter Image using average filter
-kernel = np.ones((5,5),np.float32)/25
+kernel = np.ones((15,15),np.float32)/225
 meanImg = cv2.filter2D(Y,-1,kernel)
 
 #take difference meanImg - Y
