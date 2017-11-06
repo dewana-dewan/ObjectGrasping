@@ -21,26 +21,29 @@ def plot_rectangles(file_name, img):
 			# cv2.putText(img, str(cnt),pt , font, .5, (50,0,0),2,cv2.LINE_AA)
 			# print(pt, pts)
 
-			if cnt % 4 == 0:
-				# print(cnt, pts)
-				# rectangles.append(convert_to_matrix(img, pts))
+			if cnt % 4 == 0:				
 				print(pts)
-				x_c = (pts[0] + pts[4])/2
-				y_c = (pts[1] + pts[5])/2
-				width = int(((pts[0] - pts[2]) ** 2 + (pts[1] - pts[3]) ** 2) ** (1/2))
-				height = int(((pts[2] - pts[4]) ** 2 + (pts[3] - pts[5]) ** 2) ** (1/2))
-				if ((pts[0] - pts[2]) != 0):
-					angl = atan(pts[1] - pts[3]) / (pts[0] - pts[2])
+				if ((pts[2] - pts[0]) != 0):
+					m = (pts[3] - pts[1]) / (pts[2] - pts[0])
+					angl = atan(m)*180/(np.pi)
 				else:
-					angl = np.pi / 2
-				print(width, height, angl, x_c, y_c)
+					angl = 90
+				c_x = int((pts[0] + pts[4])/2)
+				c_y = int((pts[1] + pts[5])/2)
+				wt = int(((pts[3] - pts[1])**2 + (pts[2] - pts[0])**2)**(1/2))
+				ht = int(((pts[7] - pts[1])**2 + (pts[6] - pts[0])**2)**(1/2))
+				
+				print(atan(m), angl, c_x, c_y, ht, wt)
+				cv2.circle(img, (c_x, c_y) , 1, (50,0,0))
 
-				rect = subimage(img, (110, 125), np.pi / 6.0, 100, 200)
+				rect = subimage(img, (c_x, c_y), atan(m)*180/(np.pi), wt, ht)
+				rectangles.append(rect)
+				
 				plt.subplot(111),plt.imshow(rect)
-				plt.title('Positive rectangles'), plt.xticks([]), plt.yticks([])
+				plt.title('Rectangles'), plt.xticks([]), plt.yticks([])
 				plt.show()
+				
 				pts = pts.reshape((-1,1,2))
-				# print(cnt, pts)
 				cv2.polylines(img, [pts], True, (100,0,0), 1)
 				print(pts[0][0])
 				pts = np.array([], np.int32)
@@ -49,7 +52,7 @@ def plot_rectangles(file_name, img):
 	return img
 
 def subimage(image, center, theta, width, height):
-    # theta *= 3.14159 / 180 # convert to rad
+    theta *= 3.14159 / 180 # convert to rad
 
     v_x = (cos(theta), sin(theta))
     v_y = (-sin(theta), cos(theta))
@@ -60,35 +63,6 @@ def subimage(image, center, theta, width, height):
                         [v_x[1],v_y[1], s_y]])
 
     return cv2.warpAffine(image,mapping,(width, height),flags=cv2.WARP_INVERSE_MAP,borderMode=cv2.BORDER_REPLICATE)
-
-
-
-# def subimage(image, centre, theta, width, height):
-#    output_image = cv2.cv.CreateImage((width, height), image.depth, image.nChannels)
-#    mapping = np.array([[np.cos(theta), -np.sin(theta), centre[0]],
-#                        [np.sin(theta), np.cos(theta), centre[1]]])
-#    map_matrix_cv = cv2.fromarray(mapping)
-#    cv2.GetQuadrangleSubPix(image, output_image, map_matrix_cv)
-#    return output_image
-
-def convert_to_matrix(img, cord):
-	if (cord[1] == cord[3]):
-		rect = img[cord[5]:cord[1], cord[2]:cord[0]]
-		print(cord, rect)
-		print((cord[1], cord[3]), (cord[0], cord[2]))
-		plt.subplot(111),plt.imshow(rect)
-		plt.title('Positive rectangles'), plt.xticks([]), plt.yticks([])
-		plt.show()
-		return rect
-	else:
-		if (cord[2] - cord[0]) == 0:
-			pass
-		else:
-			m = (cord[1] - cord[3]) / (cord[0] - cord[2])
-			print((cord[1], cord[3]), (cord[0], cord[2]), m)
-			if (m >= 1):
-				for i in range (cord[0], cord[2]):
-					print(bresenham())
 	
 
 img = cv2.imread('./samples/pcd0312r.png')
