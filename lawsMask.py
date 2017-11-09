@@ -110,7 +110,6 @@ def applyLawsMask (Y) :
 
     return imgs
 
-
 img = cv2.imread('./samples/pcd0312r.png')
 #Convert to YCrCb
 imgYCC = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)

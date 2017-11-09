@@ -5,9 +5,9 @@ from scipy import ndimage
 
 
 # 0. Read the image
-image  = scipy.misc.imread('pcd0312r.png',mode="L")
+image  = scipy.misc.imread('./samples/pcd0312r.png',mode="L")
 img_arr = np.array(image)
-print image
+print (image)
 # 1. Get the histogram of the iamge
 cn = []
 
@@ -15,8 +15,8 @@ for i in range(256) :
     x = float(i+1)/2
     cn.append(x)
 
-print len(cn)
-print img_arr.shape[0]
+print (len(cn))
+print (img_arr.shape[0])
 
 for i in range (img_arr.shape[0]) :
     for j in range (img_arr.shape[1]) :
@@ -31,7 +31,7 @@ for i in range(256):
 #--------
 
 #   fhist ,fedges =     np.histogram2d(x,y,cn,normed=False,weights=None)
-        
+
 #---
 
 hist, bin_edges = np.histogram(img_arr, bins=cn)
@@ -47,7 +47,7 @@ print "Max : ",im_max
 print "Mean : ",im_mean
 '''
 #array = np.array(hist)
-print hist
+print (hist)
 
 # 3. Plot the histogram
 import matplotlib.pyplot as plt
