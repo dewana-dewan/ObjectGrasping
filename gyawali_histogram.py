@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage
 
-image  = scipy.misc.imread('samples/pcd0312r.png',mode="L")
+image  = scipy.misc.imread('sample_results/glass.png',mode="L")
 img_arr = np.array(image)
 print (image)
 # 1. Get the histogram of the iamge
