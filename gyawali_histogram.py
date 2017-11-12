@@ -4,8 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage
 
-
-# 0. Read the image
 image  = scipy.misc.imread('samples/pcd0312r.png',mode="L")
 img_arr = np.array(image)
 print (image)
@@ -17,7 +15,7 @@ for i in range(256) :
     cn.append(x)
 
 print (len(cn))
-print (img_arr.shape[0], img_arr.shape[0])
+print (img_arr.shape[0], img_arr.shape[1])
 
 for i in range (img_arr.shape[0]) :
     for j in range (img_arr.shape[1]) :
@@ -30,8 +28,6 @@ for i in range(256):
 
 hist, bin_edges = np.histogram(img_arr, bins=cn)
 bin_centers = 0.5*(bin_edges[:-1] + bin_edges[1:])
-
-print(bin_centers)
 
 bins_arr = []
 bc = []
