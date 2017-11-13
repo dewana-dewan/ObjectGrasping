@@ -36,7 +36,11 @@ def plot_rectangles(file_name, img):
 				rect = subimage(img, (c_x, c_y), atan(m)*180/(np.pi), wt, ht)
 				rectangles.append(rect)
 				
-				plt.subplot(111),plt.imshow(rect)
+				### transpose
+				new = np.matmul(rect, rect.transpose())
+				### ding
+				
+				plt.subplot(111),plt.imshow(new)
 				plt.title('Rectangles'), plt.xticks([]), plt.yticks([])
 				plt.show()
 				
