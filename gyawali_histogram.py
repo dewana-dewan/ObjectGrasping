@@ -17,6 +17,7 @@ for i in range(256) :
 
 print (len(cn))
 print (img_arr.shape[0])
+print(img_arr.shape[1])
 
 for i in range (img_arr.shape[0]) :
     for j in range (img_arr.shape[1]) :
@@ -27,29 +28,11 @@ bn = []
 for i in range(256):
     bn.append(float(i))
 
-
-#--------
-
-#   fhist ,fedges =     np.histogram2d(x,y,cn,normed=False,weights=None)
-
-#---
-
 hist, bin_edges = np.histogram(img_arr, bins=cn)
 bin_centers = 0.5*(bin_edges[:-1] + bin_edges[1:])
 
-# 2. Get the min, max, mean, value of the image
-'''im_min = image.min()
-im_max = image.max()
-im_mean = image.mean()
-
-print "Min : ",im_min
-print "Max : ",im_max
-print "Mean : ",im_mean
-'''
-#array = np.array(hist)
 print (hist)
 
-# 3. Plot the histogram
 import matplotlib.pyplot as plt
 plt.plot(bin_centers, hist, lw=2)
 plt.show()
