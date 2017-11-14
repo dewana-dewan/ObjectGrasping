@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+
 def diff(img,img1): # returns just the difference of the two images
       return cv2.absdiff(img,img1)
     
