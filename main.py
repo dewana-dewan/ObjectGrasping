@@ -480,7 +480,7 @@ def createRectangles(img):
 	max1_l = 0
 	max2 = 0
 	max2_l = 0
-	
+
 	for i in range(len(contours)):
 		print(i, len(contours[i]), max1, max2)
 		# print()
@@ -530,7 +530,7 @@ def createRectangles(img):
 			dings = []
 			for k in range(3):
 				ding = subimage(roi, center, theta, siz_x, siz_y)
-				dings.append(ding)
+				dings.append(build_histogram(ding, 30))
 				theta += 45
 
 			# plt.subplot(231),plt.imshow(roi)
@@ -542,3 +542,4 @@ def createRectangles(img):
 			# plt.subplot(236),plt.imshow(dings[2])				
 			# plt.show()
 			all_for_test.extend(dings)
+	return all_for_test
