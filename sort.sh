@@ -14,7 +14,7 @@ do
 		# echo $count;
 		# echo;
 		echo $i;
-		cp $i ./teste/;
+		cp $i ./02_25/;
 		echo;
 	fi
 	count=$((count + 1))

@@ -6,6 +6,7 @@ from math import *
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.svm import SVC
+from sklearn import cross_validation
 
 def plot_rectangles(file_name, img):
 
@@ -265,14 +266,36 @@ def cannyEdgeDetection(img):
 def getRectangles(file_name, lawsMasks):
 
 	pts = np.array([], np.int32)
-	cnt = 1
+	cnt = 0
 	rectangles = []
-
+	k = 1;
+	flag = False
+	skip = 0;
 	with open(file_name, 'r') as fl:
 		for line in fl:
-
+			cnt += 1
 			this_rectangle = []
 			content = line.strip().split(' ')
+
+			if (flag and k == skip) :
+				flag = False
+				k = 1
+				skip = 0
+				continue
+			if flag :
+				k += 1
+				continue
+
+			if content[0] == 'NaN' or content[1] == 'NaN' :
+				k = 1
+				pts = np.array([], np.int32)
+				if (cnt % 4 == 0) :
+					continue
+				else :
+					skip = 4 - (cnt%4)
+					flag = True
+					continue
+
 			pt = (int(float(content[0])), int(float(content[1])))
 			pts = np.append(pts, pt)
 			#print(pts)
@@ -295,7 +318,7 @@ def getRectangles(file_name, lawsMasks):
 				k = 0
 
 				for img in lawsMasks:
-					rect = subimage(img, (c_x, c_y), atan(m)*180/(np.pi), wt, ht)
+					rect = subimage(img, (c_x, c_y), angl, wt, ht)
 					# plt.subplot(3,4,k+1),plt.imshow(rect)
 					# k += 1
 					# # plt.subplot(111),plt.imshow(rect)
@@ -311,29 +334,60 @@ def getRectangles(file_name, lawsMasks):
 				# print(pts[0][0])
 				# pts = np.array([], np.int32)
 
-			cnt += 1
-
 	return rectangles
 
 
 def trainingSVM (X, y):
 	X = np.array(X)
 	y = np.array(y)
-	classifier_conf = SVC(kernel='linear',C = 1, gamma = 'auto', probability=True)
-	classifier_conf.fit(X, y)
+	#print(len(X), len(y))
+	X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.5, random_state=0)
+	classifier_conf = SVC(kernel='poly',C = 1.0, gamma = 'auto', probability=True)
+	classifier_conf.fit(X_train, y_train)
 
-	for i in range(10) :
-		x = [X[i]]
-		print (classifier_conf.predict_proba(np.array(x)));
-
+	print (classifier_conf.score(X_train, y_train))
 	return
 
 
+def readImageAndTrain () :
+	X = []
+	Y = []
+	for folderName in range(1, 2) :
+		if (folderName == 9) :
+			upto = 50
+		elif folderName == 10 :
+			upto = 35
+		else :
+			upto = 100
+		name = str(folderName)
+		if (folderName != 10) :
+			name = '0' + name
+		for i in range(2) :
+			fname = name
+			if (i == 1) :
+				name = name + '/'+name+'_25'
+			for img_no in range(1, upto) :
+				if (i == 0 and img_no % 4 == 0) :
+					continue
+				if (i == 1 and img_no % 4 != 0) :
+					continue;
+				if (img_no < 10) :
+					img_name = fname + '0' + str(img_no)
+				else :
+					img_name = fname + str(img_no)
+				#print (name, img_name)
+				print ('Doing folder', name, 'image number', img_name)
+				x, y = main(name, img_name)
+				X.extend(x)
+				Y.extend(y)
+				print ('Done folder', name, 'image number', img_name)
+	#print (X)
+	#print(Y)
+	trainingSVM (X, Y)
 
-def main():
-	img_no = 312
-	img = cv2.imread('./samples/pcd0' + str(img_no) + 'r.png')
-	bw_img = cv2.imread('./samples/pcd0' + str(img_no) + 'r.png', 0)
+def main (folderName, img_no):
+	img = cv2.imread('../'+ folderName + '/pcd' + img_no + 'r.png')
+	bw_img = cv2.imread('../'+ folderName + '/pcd' + img_no + 'r.png', 0)
 
 	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
 	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
@@ -347,7 +401,7 @@ def main():
 	# 	plt.subplot(3,4,i+1),plt.imshow(lawsMasks[i],cmap = 'gray')
 	# plt.show()
 
-	goodRectangles = getRectangles('./samples/pcd0' + str(img_no) + 'cpos.txt', lawsMasks)
+	goodRectangles = getRectangles('../'+ folderName + '/pcd' + img_no + 'cpos.txt', lawsMasks)
 	#print(len(goodRectangles[0]))
 	#return;
 	X = []
@@ -372,14 +426,39 @@ def main():
 	# print(lawsMasks[10], len(lawsMasks))
 		X.append(all_hists);
 
+	Y = []
+	badRectangles = getRectangles('../'+ folderName + '/pcd' + img_no + 'cneg.txt', lawsMasks)
+	#print(len(badRectangles[0]))
+	#return;
+	for aRectangle in badRectangles:
+		bc = []
+		bin_size = 30
+		all_hists = []
+		# for j in range (11) :
+		# 	for i in range(len(aRectangle) * int(255/bin_size) + 1):
+		# 		# bins_arr.append(0)
+		# 		print(i)
+		# 		bc.append(i * bin_size)
+
+		for features in aRectangle:
+			# print(features)
+			rect_hist = build_histogram(features, 30)
+			all_hists.extend(rect_hist)
+		# x = np.linspace(1, 99, 99)
+		# plt.plot(x, all_hists, lw=2)
+		# plt.show()
+		#print(len(all_hists), all_hists)
+	# print(lawsMasks[10], len(lawsMasks))
+		Y.append(all_hists);
+
 	#print (len(X))
 	y = []
-	for i in range(5) :
+	for i in range(len(X)) :
 		y.append(1)
-	for i in range(5) :
-		y.append(0)
-
-	trainingSVM (X, y)
+	for i in range(len(Y)) :
+		y.append(-1)
+	X.extend(Y)
+	return X, y
 	# print(goodRectangles)
 
-main()
+readImageAndTrain()
