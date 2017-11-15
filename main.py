@@ -341,7 +341,7 @@ def trainingSVM (X, y):
 	X = np.array(X)
 	y = np.array(y)
 	#print(len(X), len(y))
-	X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.5, random_state=0)
+	X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.25, random_state=0)
 	classifier_conf = SVC(kernel='linear',C = 1.0, gamma = 'auto', probability=True)
 	classifier_conf.fit(X_train, y_train)
 
