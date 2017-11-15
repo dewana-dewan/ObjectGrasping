@@ -1,4 +1,5 @@
 import cv2
+import copy
 import numpy as np
 from math import *
 from matplotlib import pyplot as plt
@@ -74,7 +75,8 @@ for i in range(0, roi.shape[0] - siz_x, 10):
 		
 		print(len(contours[0]))
 
-		cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
+		cp_roi = copy.deepcopy(roi)
+		cv2.rectangle(cp_roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
 
 		center = (i + siz_x/2, j + siz_y/2)
 		theta = -1 * 45
@@ -82,14 +84,14 @@ for i in range(0, roi.shape[0] - siz_x, 10):
 		for k in range(3):
 			ding = subimage(roi, center, theta, siz_x, siz_y)
 			dings.append(ding)
-			theta += 45
+			theta += 45	
 
-		# plt.subplot(231),plt.imshow(roi)
-		# plt.subplot(232),plt.imshow(local_roi)		
-		# plt.subplot(233),plt.imshow(thresh)
+		plt.subplot(231),plt.imshow(cp_roi)
+		plt.subplot(232),plt.imshow(local_roi)		
+		plt.subplot(233),plt.imshow(thresh)
 
-		# plt.subplot(234),plt.imshow(dings[0])
-		# plt.subplot(235),plt.imshow(dings[1])		
-		# plt.subplot(236),plt.imshow(dings[2])				
-		# plt.show()
+		plt.subplot(234),plt.imshow(dings[0])
+		plt.subplot(235),plt.imshow(dings[1])		
+		plt.subplot(236),plt.imshow(dings[2])				
+		plt.show()
 		all_for_test.extend(dings)
