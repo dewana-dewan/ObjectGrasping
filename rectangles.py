@@ -13,13 +13,10 @@ def plot_rectangles(file_name, img):
 
 	with open(file_name, 'r') as fl:
 		for line in fl:
-	
+
 			content = line.strip().split(' ')
 			pt = (int(float(content[0])), int(float(content[1])))
 			pts = np.append(pts, pt)
-			# font = cv2.FONT_HERSHEY_SIMPLEX
-			# cv2.putText(img, str(cnt),pt , font, .5, (50,0,0),2,cv2.LINE_AA)
-			# print(pt, pts)
 
 			if cnt % 4 == 0:				
 				print(pts)
@@ -39,7 +36,11 @@ def plot_rectangles(file_name, img):
 				rect = subimage(img, (c_x, c_y), atan(m)*180/(np.pi), wt, ht)
 				rectangles.append(rect)
 				
-				plt.subplot(111),plt.imshow(rect)
+				### transpose
+				new = np.matmul(rect, rect.transpose())
+				### ding
+				
+				plt.subplot(111),plt.imshow(new)
 				plt.title('Rectangles'), plt.xticks([]), plt.yticks([])
 				plt.show()
 				
