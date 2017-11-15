@@ -342,17 +342,17 @@ def trainingSVM (X, y):
 	y = np.array(y)
 	#print(len(X), len(y))
 	X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.5, random_state=0)
-	classifier_conf = SVC(kernel='poly',C = 1.0, gamma = 'auto', probability=True)
+	classifier_conf = SVC(kernel='linear',C = 1.0, gamma = 'auto', probability=True)
 	classifier_conf.fit(X_train, y_train)
 
-	print (classifier_conf.score(X_train, y_train))
+	print (classifier_conf.score(X_test, y_test))
 	return
 
 
 def readImageAndTrain () :
 	X = []
 	Y = []
-	for folderName in range(1, 2) :
+	for folderName in range(1, 11) :
 		if (folderName == 9) :
 			upto = 50
 		elif folderName == 10 :
@@ -366,6 +366,8 @@ def readImageAndTrain () :
 			fname = name
 			if (i == 1) :
 				name = name + '/'+name+'_25'
+			if (folderName == 2 and i == 1) :
+				continue
 			for img_no in range(1, upto) :
 				if (i == 0 and img_no % 4 == 0) :
 					continue
