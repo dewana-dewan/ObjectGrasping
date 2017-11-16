@@ -414,7 +414,6 @@ def main (folderName, img_no):
 
 	lawsMasks.append(sobelEdge)
 	lawsMasks.append(cannyEdge)
-
 	# for i in range(11) :
 	# 	plt.subplot(3,4,i+1),plt.imshow(lawsMasks[i],cmap = 'gray')
 	# plt.show()
@@ -497,7 +496,7 @@ def createRectangles(img):
 	max2_l = 0
 
 	for i in range(len(contours)):
-		print(i, len(contours[i]), max1, max2)
+		# print(i, len(contours[i]), max1, max2)
 		# print()
 		if max1_l <= len(contours[i]):
 			max1_l = len(contours[i])
@@ -508,7 +507,7 @@ def createRectangles(img):
 			max2_l = len(contours[i])
 			max2 = i
 
-	print(max2, max1)
+	# print(max2, max1)
 
 	x, y, width, height = cv2.boundingRect(contours[max2])
 	roi = img[y - margin:y + height + margin, x - margin:x + width + margin]
@@ -516,7 +515,7 @@ def createRectangles(img):
 	# roi containes the focused image now.
 	# we'll now try and create rectangles
 
-	print(roi.shape[0], roi.shape[1])
+	# print(roi.shape[0], roi.shape[1])
 
 	siz_x = int(roi.shape[0] / 5)
 	siz_y = int(roi.shape[1] / 5)
@@ -536,36 +535,72 @@ def createRectangles(img):
 				print(len(contours[0]))
 				continue;
 
-			print(len(contours))
+			if ( len(contours) == 0):
+				continue
 
-			cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
+			#cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
 
 			center = (i + siz_x/2, j + siz_y/2)
-			theta = -1 * 45
+			# theta = -1 * 45
+			theta = 0
 			dings = []
-			for k in range(3):
+			ding = []
+			print('ding')
+			for k in range(1):
 				ding = subimage(roi, center, theta, siz_x, siz_y)
-				dings.append(build_histogram(ding, 30))
+				print('ding')
+				dings.append(ding)
 				theta += 45
 
 			# plt.subplot(231),plt.imshow(roi)
 			# plt.subplot(232),plt.imshow(local_roi)
 			# plt.subplot(233),plt.imshow(thresh)
-
+			#
 			# plt.subplot(234),plt.imshow(dings[0])
-			# plt.subplot(235),plt.imshow(dings[1])
-			# plt.subplot(236),plt.imshow(dings[2])
+			# # plt.subplot(235),plt.imshow(dings[1])
+			# # plt.subplot(236),plt.imshow(dings[2])
 			# plt.show()
 			all_for_test.extend(dings)
+			print('all test length', len(all_for_test))
 	return all_for_test
 
 
 def test () :
-	path  = '../01/01_25/pcd0100r.png'
+	path  = '../03/03_25/pcd0312r.png'
 	img = cv2.imread (path)
+	bw_img = cv2.imread(path, 0)
+
 	model = readImageAndTrain ();
-	X = createRectangles (img)
-	for aRect in X:
-		ans = model.predict_proba(aRect)
-		print(ans)
+
+	X = createRectangles(img)
+	print(len(X), len(X[0]), len(X[0][0]))
+
+	for image in X :
+		sobelEdge = sobelEdgeDetection(cv2.cvtColor(image,cv2.COLOR_BGR2GRAY))
+		cannyEdge = cannyEdgeDetection (copy.deepcopy(image))
+		lawsMasks = applyLawsMask(copy.deepcopy(image))
+
+		lawsMasks.append(sobelEdge)
+		lawsMasks.append(cannyEdge)
+
+		# for image in lawsMasks :
+		# 	plt.subplot(111),plt.imshow(image)
+		# 	plt.show()
+
+		# 	x = createRectangles (image)
+		#
+		# 	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
+		# 	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
+		# 	lawsMasks = applyLawsMask(copy.deepcopy(img))
+		#
+		# 	lawsMasks.append(sobelEdge)
+		# 	lawsMasks.append(cannyEdge)
+		# 	print (len(x))
+		# return ;
+		# # q = PriorityQueue()
+		# # print('testing now', X)
+		rect_hist = build_histogram(np.array(lawsMasks), 30)
+
+		ans = model.predict_proba(np.array(rect_hist))
+			# print(ans)
 test()
