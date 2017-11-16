@@ -27,7 +27,7 @@ kernel = np.ones((3, 3), np.uint8)
 margin = 20
 dilated = cv2.morphologyEx(bw_edges, cv2.MORPH_DILATE, kernel)
 
-with_contours, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  
+with_contours, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 max1 = 0
 max1_l = 0
@@ -64,7 +64,7 @@ for i in range(0, roi.shape[0] - siz_x, 10):
 
 		local_roi = roi[j:j + siz_y, i:i + siz_x]
 		bw_local_roi = cv2.cvtColor(local_roi,cv2.COLOR_BGR2GRAY)
-		
+
 		ret, thresh = cv2.threshold(bw_local_roi ,127,255,0)
 		im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
@@ -72,7 +72,7 @@ for i in range(0, roi.shape[0] - siz_x, 10):
 		if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
 			print(len(contours[0]))
 			continue;
-		
+
 		print(len(contours[0]))
 
 		cp_roi = copy.deepcopy(roi)
@@ -84,14 +84,14 @@ for i in range(0, roi.shape[0] - siz_x, 10):
 		for k in range(3):
 			ding = subimage(roi, center, theta, siz_x, siz_y)
 			dings.append(ding)
-			theta += 45	
+			theta += 45
 
 		plt.subplot(231),plt.imshow(cp_roi)
-		plt.subplot(232),plt.imshow(local_roi)		
+		plt.subplot(232),plt.imshow(local_roi)
 		plt.subplot(233),plt.imshow(thresh)
 
 		plt.subplot(234),plt.imshow(dings[0])
-		plt.subplot(235),plt.imshow(dings[1])		
-		plt.subplot(236),plt.imshow(dings[2])				
+		plt.subplot(235),plt.imshow(dings[1])
+		plt.subplot(236),plt.imshow(dings[2])
 		plt.show()
 		all_for_test.extend(dings)
