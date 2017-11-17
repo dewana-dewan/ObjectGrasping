@@ -82,7 +82,7 @@ def build_histogram(img_arr, bin_size):
 
 	for i in range(img_arr.shape[0]):
 		for j in range(img_arr.shape[1]):
-
+			# print (img_arr[i][j])
 			a = int(img_arr[i][j] / bin_size)
 			b = img_arr[i][j] % bin_size
 			k = abs(0.5 - b / bin_size)
@@ -480,8 +480,9 @@ def main (folderName, img_no):
 
 
 def createRectangles(img):
+	# print (img.shape)
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+	# print (gray.shape)
 	bw_edges = cv2.Canny(gray,50,100)
 
 	kernel = np.ones((3, 3), np.uint8)
@@ -499,8 +500,8 @@ def createRectangles(img):
 		# print(i, len(contours[i]), max1, max2)
 		# print()
 		if max1_l <= len(contours[i]):
-			max1_l = len(contours[i])
 			max2_l = max1_l
+			max1_l = len(contours[i])
 			max2 = max1
 			max1 = i
 		elif max2_l <= len(contours[i]):
@@ -544,14 +545,16 @@ def createRectangles(img):
 			# theta = -1 * 45
 			theta = 0
 			dings = []
-			ding = []
+			# ding = np.array([], np.int32)
 			print('ding')
-			for k in range(1):
-				ding = subimage(roi, center, theta, siz_x, siz_y)
-				print('ding')
-				dings.append(ding)
-				theta += 45
-
+			# for k in range(3):
+			ding = subimage(roi, center, theta, siz_x, siz_y)
+			print (ding.shape, '------')
+			print('ding')
+			# dings.append(ding)
+			# print (len(dings), '*********')
+			theta += 45
+			# return ;
 			# plt.subplot(231),plt.imshow(roi)
 			# plt.subplot(232),plt.imshow(local_roi)
 			# plt.subplot(233),plt.imshow(thresh)
@@ -560,7 +563,9 @@ def createRectangles(img):
 			# # plt.subplot(235),plt.imshow(dings[1])
 			# # plt.subplot(236),plt.imshow(dings[2])
 			# plt.show()
-			all_for_test.extend(dings)
+			# return dings
+			print(len(ding), 'akjdkjhaskdh')
+			all_for_test.append(ding)
 			print('all test length', len(all_for_test))
 	return all_for_test
 
@@ -576,7 +581,7 @@ def test () :
 	print(len(X), len(X[0]), len(X[0][0]))
 
 	for image in X :
-		sobelEdge = sobelEdgeDetection(cv2.cvtColor(image,cv2.COLOR_BGR2GRAY))
+		sobelEdge = sobelEdgeDetection(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
 		cannyEdge = cannyEdgeDetection (copy.deepcopy(image))
 		lawsMasks = applyLawsMask(copy.deepcopy(image))
 
@@ -599,8 +604,12 @@ def test () :
 		# return ;
 		# # q = PriorityQueue()
 		# # print('testing now', X)
-		rect_hist = build_histogram(np.array(lawsMasks), 30)
+		all_hist= []
+		for i in range(11):
+			rect_hist = build_histogram(lawsMasks[0], 30)
+			all_hist.extend(rect_hist)
 
-		ans = model.predict_proba(np.array(rect_hist))
-			# print(ans)
+		print("Prediction Score")
+		ans = model.predict_proba(np.array([all_hist]))
+		print(ans)
 test()
