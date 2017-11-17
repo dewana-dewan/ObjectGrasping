@@ -1,2 +1,2 @@
 # ObjectGrasping
-Predicting optimal grasping points using machine learning
+Predicting optimal grasping region using machine learning
