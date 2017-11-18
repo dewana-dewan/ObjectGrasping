@@ -1,3 +1,5 @@
+import cv2
+import os
 import pandas as pd
 import numpy as np
 from sklearn.svm import SVC
@@ -8,7 +10,57 @@ from sklearn.datasets.samples_generator import make_blobs
 from pandas.tools.plotting import parallel_coordinates
 from math import *
 from matplotlib import pyplot as plt
+from image_proc import *
+from rectangle_related import *
+from histo import *
 
+
+def plotData (X, y) :
+	print (X[0])
+	#print (y)
+	X = np.array(X)
+	y = np.array(y)
+	
+	# np.savetxt("X10.csv", X, delimiter=",")
+	# np.savetxt("y10.csv", y, delimiter=",")
+
+
+	#cols = []
+	#for i in range(0, )
+
+	#X = pd.io.parsers.read_csv('../X10.csv');
+	
+	X = np.array(X)
+	X = X.astype(np.float64, copy=False)
+	
+	#y = pd.io.parsers.read_csv('../y10.csv');
+	
+	y = np.array(y)
+	y = y.astype(np.float64, copy=False)
+
+
+	#print (X.isnull().any())
+	#print (y.isnull().any())
+
+	#X = np.array(X);
+	#y = np.array(y);
+
+	#print (X.shape)
+
+	X_norm = (X - X.min())/(X.max() - X.min())
+
+	#print (X_norm)
+	#print (y.dtype)
+
+	pca = sklearnPCA(n_components=2) #2-dimensional PCA
+	transformed = pd.DataFrame(pca.fit_transform(X_norm))
+
+	plt.scatter(transformed[y==-1][0], transformed[y==-1][1], label='Negative Rectangles', c='red')
+	plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Positive Rectangles', c='lightgreen')
+	#plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Class 3', c='lightgreen')
+
+	plt.legend()
+	plt.show()
 
 def saveModel (gnb) :
 	with open('svmModel.pkl', 'wb') as fid:
@@ -38,7 +90,7 @@ def readImageAndTrain () :
 
 	# 	return gnb_loaded
 
-	for folderName in range(1, 11) :
+	for folderName in range(1, 2) :
 		if (folderName == 9) :
 			upto = 50
 		elif folderName == 10 :
@@ -65,7 +117,7 @@ def readImageAndTrain () :
 					img_name = fname + str(img_no)
 				#print (name, img_name)
 				print ('Doing folder', name, 'image number', img_name)
-				x, y = main(name, img_name)
+				x, y = getHistFromImage(name, img_name)
 				X.extend(x)
 				Y.extend(y)
 				print ('Done folder', name, 'image number', img_name)
@@ -74,47 +126,101 @@ def readImageAndTrain () :
 
 	plotData (X, Y)
 
-def plotData () :
-	# X = np.array(X)
-	# y = np.array(y)
+
+
+def diff(img,img1): # returns just the difference of the two images
+      return cv2.absdiff(img,img1)
+    
+def remove_bg(img0,img,img1): # removes the background but requires three images 
+        x = diff(img0,img)
+        y = diff(img,img1)
+        return cv2.bitwise_and(x,y)
+
+def subtractBackground (img, img0) :
+
+	return remove_bg(img, img0, img);
+ 
+# cv2.imshow('final',d)
+
+# cv2.waitKey(0)
+
+
+def getHistFromImage (folderName, img_no):
+	img = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png')
+	#img_bg = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png')
 	
-	# np.savetxt("X10.csv", X, delimiter=",")
-	# np.savetxt("y10.csv", y, delimiter=",")
-
-
-	#cols = []
-	#for i in range(0, )
-
-	X = pd.io.parsers.read_csv('../X10.csv');
+	#print(os.path.abspath('../../'+ folderName + '/pcd' + img_no + 'r.png'))
 	
-	X = np.array(X)
-	X = X.astype(np.float64, copy=False)
-	
-	y = pd.io.parsers.read_csv('../y10.csv');
-	
-	y = np.array(y)
-	y = y.astype(np.float64, copy=False)
+	bw_img = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png', 0)
+	#bw_img_bg = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png', 0)
+
+	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
+	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
+	lawsMasks = applyLawsMask(copy.deepcopy(img))
 
 
-	#print (X.isnull().any())
-	#print (y.isnull().any())
+	lawsMasks.append(sobelEdge)
+	lawsMasks.append(cannyEdge)
+	# for i in range(11) :
+	# 	plt.subplot(3,4,i+1),plt.imshow(lawsMasks[i],cmap = 'gray')
+	# plt.show()
 
-	#X = np.array(X);
-	#y = np.array(y);
+	goodRectangles = getRectangles('../../'+ folderName + '/pcd' + img_no + 'cpos.txt', lawsMasks)
+	#print(len(goodRectangles[0]))
+	#return;
+	X = []
+	for aRectangle in goodRectangles:
+		bc = []
+		bin_size = 30
+		all_hists = []
+		# for j in range (11) :
+		# 	for i in range(len(aRectangle) * int(255/bin_size) + 1):
+		# 		# bins_arr.append(0)
+		# 		print(i)
+		# 		bc.append(i * bin_size)
 
-	#print (X.shape)
+		for features in aRectangle:
+			# print(features)
+			rect_hist = build_histogram(features, 10)
+			all_hists.extend(rect_hist)
+		# x = np.linspace(1, 99, 99)
+		# plt.plot(x, all_hists, lw=2)
+		# plt.show()
+		#print(len(all_hists), all_hists)
+	# print(lawsMasks[10], len(lawsMasks))
+		X.append(all_hists);
 
-	X_norm = (X - X.min())/(X.max() - X.min())
+	Y = []
+	badRectangles = getRectangles('../../'+ folderName + '/pcd' + img_no + 'cneg.txt', lawsMasks)
+	#print(len(badRectangles[0]))
+	#return;
+	for aRectangle in badRectangles:
+		bc = []
+		bin_size = 30
+		all_hists = []
+		# for j in range (11) :
+		# 	for i in range(len(aRectangle) * int(255/bin_size) + 1):
+		# 		# bins_arr.append(0)
+		# 		print(i)
+		# 		bc.append(i * bin_size)
 
-	print (X_norm)
-	print (y.dtype)
+		for features in aRectangle:
+			# print(features)
+			rect_hist = build_histogram(features, 10)
+			all_hists.extend(rect_hist)
+		# x = np.linspace(1, 99, 99)
+		# plt.plot(x, all_hists, lw=2)
+		# plt.show()
+		#print(len(all_hists), all_hists)
+	# print(lawsMasks[10], len(lawsMasks))
+		Y.append(all_hists);
 
-	pca = sklearnPCA(n_components=2) #2-dimensional PCA
-	transformed = pd.DataFrame(pca.fit_transform(X_norm))
+	#print (len(X))
+	y = []
+	for i in range(len(X)) :
+		y.append(1)
+	for i in range(len(Y)) :
+		y.append(-1)
+	X.extend(Y)
+	return X, y
 
-	plt.scatter(transformed[y==-1][0], transformed[y==-1][1], label='Negative Rectangles', c='red')
-	plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Positive Rectangles', c='lightgreen')
-	#plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Class 3', c='lightgreen')
-
-	plt.legend()
-	plt.show()
