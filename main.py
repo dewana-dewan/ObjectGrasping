@@ -201,39 +201,39 @@ def applyLawsMask (img) :
 	#R5S5 = R5S5 + cv2.filter2D(R5S5,-1,kernel)
 
 	image = (E5L5 + L5E5)/2
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = (R5L5 + L5R5)/2
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = (E5S5 + S5E5)/2
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = S5S5/1.0
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = R5R5/1.0
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = (L5S5 + S5L5)/2
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = E5E5/1.0
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image)
 
 	image = (R5E5 + E5R5)/2
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	image = (S5R5 + R5S5)/2
-	image *= 255.0/image.max();
+	#image *= 255.0/image.max();
 	imgs.append (image);
 
 	return imgs
@@ -363,9 +363,9 @@ def trainingSVM (X, y):
 	return classifier_conf
 
 
-def plotData () :
-	# X = np.array(X)
-	# y = np.array(y)
+def plotData (X, y) :
+	X = np.array(X)
+	y = np.array(y)
 	
 	# np.savetxt("X10.csv", X, delimiter=",")
 	# np.savetxt("y10.csv", y, delimiter=",")
@@ -374,12 +374,12 @@ def plotData () :
 	#cols = []
 	#for i in range(0, )
 
-	X = pd.io.parsers.read_csv('X10.csv');
+	#X = pd.io.parsers.read_csv('X10.csv');
 	
 	X = np.array(X)
 	X = X.astype(np.float64, copy=False)
 	
-	y = pd.io.parsers.read_csv('y10.csv');
+	#y = pd.io.parsers.read_csv('y10.csv');
 	
 	y = np.array(y)
 	y = y.astype(np.float64, copy=False)
@@ -392,7 +392,11 @@ def plotData () :
 	#y = np.array(y);
 
 	#print (X.shape)
-
+	data = X
+	predict = k_means.predict(X)
+	data['cluster'] = predict
+	pandas.tools.plotting.parallel_coordinates(data, 'cluster')
+	return ;
 	X_norm = (X - X.min())/(X.max() - X.min())
 
 	print (X_norm)
@@ -420,7 +424,7 @@ def readImageAndTrain () :
 
 	# 	return gnb_loaded
 
-	for folderName in range(1, 11) :
+	for folderName in range(1, 2) :
 		if (folderName == 9) :
 			upto = 50
 		elif folderName == 10 :
@@ -668,4 +672,4 @@ def test () :
 		ans = model.predict_proba(np.array([all_hist]))
 		print(ans)
 
-plotData()
+readImageAndTrain ()
