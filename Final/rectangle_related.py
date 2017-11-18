@@ -1,3 +1,8 @@
+import numpy as np
+from math import *
+import cv2
+from matplotlib import pyplot as plt
+
 # class Rectangle_related():
 def plot_rectangles(file_name, img):
 
