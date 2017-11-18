@@ -24,7 +24,7 @@ def showImage (img) :
 
 
 def applyLawsMask (img) :
-
+	#return []
 	imgYCC = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
 
 
