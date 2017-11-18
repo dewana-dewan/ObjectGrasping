@@ -9,6 +9,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.svm import SVC
 from sklearn import cross_validation
+import pandas as pd
+from sklearn.decomposition import PCA as sklearnPCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.datasets.samples_generator import make_blobs
+from pandas.tools.plotting import parallel_coordinates
 
 
 def plot_rectangles(file_name, img):
@@ -358,15 +363,62 @@ def trainingSVM (X, y):
 	return classifier_conf
 
 
+def plotData () :
+	# X = np.array(X)
+	# y = np.array(y)
+	
+	# np.savetxt("X10.csv", X, delimiter=",")
+	# np.savetxt("y10.csv", y, delimiter=",")
+
+
+	#cols = []
+	#for i in range(0, )
+
+	X = pd.io.parsers.read_csv('X10.csv');
+	
+	X = np.array(X)
+	X = X.astype(np.float64, copy=False)
+	
+	y = pd.io.parsers.read_csv('y10.csv');
+	
+	y = np.array(y)
+	y = y.astype(np.float64, copy=False)
+
+
+	#print (X.isnull().any())
+	#print (y.isnull().any())
+
+	#X = np.array(X);
+	#y = np.array(y);
+
+	#print (X.shape)
+
+	X_norm = (X - X.min())/(X.max() - X.min())
+
+	print (X_norm)
+	print (y.dtype)
+
+	pca = sklearnPCA(n_components=2) #2-dimensional PCA
+	transformed = pd.DataFrame(pca.fit_transform(X_norm))
+
+	plt.scatter(transformed[y==-1][0], transformed[y==-1][1], label='Negative Rectangles', c='red')
+	plt.scatter(transformed[y==1][0], transformed[y==1][1], label='Positive Rectangles', c='lightgreen')
+	#plt.scatter(transformed[y==3][0], transformed[y==3][1], label='Class 3', c='lightgreen')
+
+	plt.legend()
+	plt.show()
+
+
+
 def readImageAndTrain () :
 	X = []
 	Y = []
-	import os.path
-	if os.path.isfile('svmModel.pkl') :
-		with open('svmModel.pkl', 'rb') as fid:
-		    gnb_loaded = cPickle.load(fid)
+	# import os.path
+	# if os.path.isfile('svmModel.pkl') :
+	# 	with open('svmModel.pkl', 'rb') as fid:
+	# 	    gnb_loaded = cPickle.load(fid)
 
-		return gnb_loaded
+	# 	return gnb_loaded
 
 	for folderName in range(1, 11) :
 		if (folderName == 9) :
@@ -401,7 +453,10 @@ def readImageAndTrain () :
 				print ('Done folder', name, 'image number', img_name)
 	#print (X)
 	#print(Y)
-	trainingSVM (X, Y)
+
+	plotData (X, Y)
+
+	#trainingSVM (X, Y)
 
 def main (folderName, img_no):
 	img = cv2.imread('../'+ folderName + '/pcd' + img_no + 'r.png')
@@ -612,4 +667,5 @@ def test () :
 		print("Prediction Score")
 		ans = model.predict_proba(np.array([all_hist]))
 		print(ans)
-test()
+
+plotData()
