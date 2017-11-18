@@ -30,8 +30,8 @@ def build_histogram(img_arr, bin_size):
 	c = 0
 	for i in range(int(255/bin_size) + 1):
 		c += bins_arr[i]
-	for i in range(int(255/bin_size) + 1):
-		bins_arr[i] /= c
+	# for i in range(int(255/bin_size) + 1):
+	# 	bins_arr[i] /= c
 
 	#print(bins_arr, c)
 	return bins_arr
