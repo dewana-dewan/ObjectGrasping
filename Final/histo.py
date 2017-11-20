@@ -8,6 +8,7 @@ def build_histogram(img_arr, bin_size):
 		# bc.append(i * bin_size)
 
 	# print(bins_arr)
+	#print(img_arr.max(), img_arr.min())
 
 	for i in range(img_arr.shape[0]):
 		for j in range(img_arr.shape[1]):
