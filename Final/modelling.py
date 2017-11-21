@@ -209,12 +209,11 @@ def trainingSVM (X, y):
 def readImageAndTrain () :
 	X = []
 	Y = []
-	# import os.path
-	# if os.path.isfile('svmModel.pkl') :
-	# 	with open('svmModel.pkl', 'rb') as fid:
-	# 	    gnb_loaded = cPickle.load(fid)
-
-	# 	return gnb_loaded
+	import os.path
+	if os.path.isfile('svmModel.pkl') :
+		with open('svmModel.pkl', 'rb') as fid:
+			gnb_loaded = cPickle.load(fid)
+		return gnb_loaded
 
 	for folderName in range(3, 4) :
 		if (folderName == 9) :
@@ -319,7 +318,9 @@ def getHistFromImage (folderName, img_no):
 			# print(features.max())
 			features = np.matmul(features, features.transpose())
 			# print(features.max())
-			features *= int(255.0/float(features.max()))
+			if (features.max() != 0):
+				features *= int(255.0/float(features.max()))
+
 			# print(features.max())
 
 			rect_hist = build_histogram(features, 10)
@@ -350,7 +351,9 @@ def getHistFromImage (folderName, img_no):
 		for features in aRectangle:
 			# print(features)
 			features = np.matmul(features, features.transpose())
-			features *= int(255.0/float(features.max()))
+
+			if (features.max() != 0):
+				features *= int(255.0/float(features.max()))
 			rect_hist = build_histogram(features, 10)
 			all_hists.extend(rect_hist)
 		# x = np.linspace(1, 99, 99)

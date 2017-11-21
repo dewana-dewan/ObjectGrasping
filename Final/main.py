@@ -68,7 +68,7 @@ def test () :
 		# # print('testing now', X)
 		
 		all_hist= []
-		all_hists.extend(fcs_hist)
+		all_hist.extend(fcs_hist)
 
 		for i in range(len(lawsMasks)):
 			
@@ -110,8 +110,10 @@ def test () :
 		# print(img)
 		cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,255,0),1)
 		pass
-	plt.imshow(complete_image)
-	plt.savefig('complete_image.png')
+	#plt.imshow(complete_image)
+	#plt.show()
+	#plt.savefig('complete_image.png')
+	cv2.imwrite('complete_image.png', complete_image)
 
 test()
 
