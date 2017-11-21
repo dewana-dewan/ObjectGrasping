@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 from image_proc import *
 from rectangle_related import *
 from histo import *
-from ggplot import *
+# from ggplot import *
 from sklearn.manifold import TSNE
 import time
 
@@ -111,7 +111,7 @@ def plotData () :
 
 	draw_svm (transformed, y)
 
-plotData()
+# plotData()
 
 def saveModel (gnb) :
 	with open('svmModel.pkl', 'wb') as fid:
@@ -288,14 +288,14 @@ def getHistFromImage (folderName, img_no):
 	# plt.show()
 
 	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
-	#cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
+	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
 	lawsMasks = applyLawsMask(copy.deepcopy(img))
 
 
 	lawsMasks.append(sobelEdge)
+	lawsMasks.append(cannyEdge)
 	# fcs = focusImg(img)
 	# fcs_hist = build_histogram(fcs, 10)
-	#lawsMasks.append(cannyEdge)
 	# for i in range(11) :
 	# 	plt.subplot(3,4,i+1),plt.imshow(lawsMasks[i],cmap = 'gray')
 	# plt.show()

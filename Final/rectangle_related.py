@@ -188,12 +188,12 @@ def createRectangles(img, model = None):
 			im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
 
-			# if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
-			# 	print(len(contours[0]))
-			# 	continue;
+			if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
+				print(len(contours[0]))
+				continue;
 
-			# if ( len(contours) == 0):
-			# 	continue
+			if ( len(contours) == 0):
+				continue
 
 			# cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
 
@@ -204,12 +204,12 @@ def createRectangles(img, model = None):
 			# ding = np.array([], np.int32)
 			#print('ding')
 			# for k in range(3):
-			ding = subimage(roi, center, theta, siz_x, siz_y)
+			ding = (local_roi, ((i, j), (i + siz_x, j + siz_y)))
+			# ding = subimage(roi, center, theta, siz_x, siz_y)
 			#print (ding.shape, '------')
 			#print('ding')
 			# dings.append(ding)
 			# print (len(dings), '*********')
-			theta += 45
 			# return ;
 			
 
