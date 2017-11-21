@@ -48,7 +48,7 @@ def test (no) :
 		lawsMasks.append(cannyEdge)
 
 		fcs = focusImg(img)
-		fcs_hist = build_histogram(fcs, 10)
+		fcs_hist = build_histogram(fcs, 5)
 
 		# for image in lawsMasks :
 		# 	plt.subplot(111),plt.imshow(image)
@@ -80,7 +80,7 @@ def test (no) :
 			# print(ding.max())
 
 
-			rect_hist = build_histogram(ding, 10)
+			rect_hist = build_histogram(ding, 5)
 			all_hist.extend(rect_hist)
 
 		print("Prediction Score")
@@ -108,16 +108,18 @@ def test (no) :
 		img = q.get()
 		# print(img[0], i)
 		# print(img)
-		cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,255,0),1)
+		cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,(i*60)%255,(i*20)*100),1)
 		pass
 	#plt.imshow(complete_image)
 	#plt.show()
 	#plt.savefig('complete_image.png')
-	cv2.imwrite('complete_image' + i +'.png', complete_image)
+	cv2.imwrite('complete_image' + no +'.png', complete_image)
 
 for i in range(300, 397, 4):
-	test(str(i))
-
+	try:
+		test(str(i))
+	except:
+		print('some error')
 
 # plotData()
 # test()

@@ -179,13 +179,13 @@ def cleanData (X, y) :
 
 
 def trainingSVM (X, y):
-	# from sklearn.preprocessing import MinMaxScaler
-	# from sklearn.preprocessing import StandardScaler
-	# from sklearn.preprocessing import Normalizer
+	from sklearn.preprocessing import MinMaxScaler
+	from sklearn.preprocessing import StandardScaler
+	from sklearn.preprocessing import Normalizer
 	# scaler = MinMaxScaler(feature_range=(0, 1))
 	# X = scaler.fit_transform(X)
-	# scaler = StandardScaler().fit(X)
-	# X = scaler.transform(X)
+	scaler = StandardScaler().fit(X)
+	X = scaler.transform(X)
 	#plotData (X, y)
 	#return 
 	# scaler = Normalizer().fit(X)
@@ -209,13 +209,14 @@ def trainingSVM (X, y):
 def readImageAndTrain () :
 	X = []
 	Y = []
+	'''
 	import os.path
 	if os.path.isfile('svmModel.pkl') :
 		with open('svmModel.pkl', 'rb') as fid:
 			gnb_loaded = cPickle.load(fid)
 		return gnb_loaded
-
-	for folderName in range(3, 4) :
+	'''
+	for folderName in range(2, 6) :
 		if (folderName == 9) :
 			upto = 50
 		elif folderName == 10 :
@@ -294,7 +295,7 @@ def getHistFromImage (folderName, img_no):
 	lawsMasks.append(sobelEdge)
 	lawsMasks.append(cannyEdge)
 	fcs = focusImg(img)
-	fcs_hist = build_histogram(fcs, 10)
+	fcs_hist = build_histogram(fcs, 5)
 	# for i in range(11) :
 	# 	plt.subplot(3,4,i+1),plt.imshow(lawsMasks[i],cmap = 'gray')
 	# plt.show()
@@ -323,7 +324,7 @@ def getHistFromImage (folderName, img_no):
 
 			# print(features.max())
 
-			rect_hist = build_histogram(features, 10)
+			rect_hist = build_histogram(features, 5)
 			all_hists.extend(rect_hist)
 		# x = np.linspace(1, 99, 99)
 		# plt.plot(x, all_hists, lw=2)
@@ -354,7 +355,7 @@ def getHistFromImage (folderName, img_no):
 
 			if (features.max() != 0):
 				features *= int(255.0/float(features.max()))
-			rect_hist = build_histogram(features, 10)
+			rect_hist = build_histogram(features, 5)
 			all_hists.extend(rect_hist)
 		# x = np.linspace(1, 99, 99)
 		# plt.plot(x, all_hists, lw=2)
