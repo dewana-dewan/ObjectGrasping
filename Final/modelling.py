@@ -275,27 +275,27 @@ def subtractBackground (img, img0) :
 
 def getHistFromImage (folderName, img_no):
 	img = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png')
-	img_bg = cv2.imread('../../backgrounds/pcdb0003r.png')
-	img = subtractBackground (img_bg, img);
+	# img_bg = cv2.imread('../../backgrounds/pcdb0003r.png')
+	# img = subtractBackground (img_bg, img);
 	#print(os.path.abspath('../../'+ folderName + '/pcd' + img_no + 'r.png'))
-	bw_img_bg = cv2.imread('../../backgrounds/pcdb0003r.png', 0)
-	bw_img = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png', 0)
-	#bw_img_bg = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png', 0)
-	bw_img = subtractBackground (bw_img_bg, bw_img);
+	# bw_img_bg = cv2.imread('../../backgrounds/pcdb0003r.png', 0)
+	# bw_img = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png', 0)
+	# #bw_img_bg = cv2.imread('../../'+ folderName + '/pcd' + img_no + 'r.png', 0)
+	# bw_img = subtractBackground (bw_img_bg, bw_img);
 
 	# plt.subplot (121), plt.imshow (img)
 	# plt.subplot (122), plt.imshow (bw_img)
 	# plt.show()
 
-	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
+	sobelEdge = sobelEdgeDetection(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
 	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
 	lawsMasks = applyLawsMask(copy.deepcopy(img))
 
 
 	lawsMasks.append(sobelEdge)
 	lawsMasks.append(cannyEdge)
-	# fcs = focusImg(img)
-	# fcs_hist = build_histogram(fcs, 10)
+	fcs = focusImg(img)
+	fcs_hist = build_histogram(fcs, 10)
 	# for i in range(11) :
 	# 	plt.subplot(3,4,i+1),plt.imshow(lawsMasks[i],cmap = 'gray')
 	# plt.show()
@@ -308,7 +308,7 @@ def getHistFromImage (folderName, img_no):
 		bc = []
 		bin_size = 30
 		all_hists = []
-		# all_hists.extend(fcs_hist)
+		all_hists.extend(fcs_hist)
 		# for j in range (11) :
 		# 	for i in range(len(aRectangle) * int(255/bin_size) + 1):
 		# 		# bins_arr.append(0)
@@ -316,11 +316,11 @@ def getHistFromImage (folderName, img_no):
 		# 		bc.append(i * bin_size)
 
 		for features in aRectangle:
-			print(features.max())
+			# print(features.max())
 			features = np.matmul(features, features.transpose())
-			print(features.max())
+			# print(features.max())
 			features *= int(255.0/float(features.max()))
-			print(features.max())
+			# print(features.max())
 
 			rect_hist = build_histogram(features, 10)
 			all_hists.extend(rect_hist)
@@ -339,7 +339,7 @@ def getHistFromImage (folderName, img_no):
 		bc = []
 		bin_size = 30
 		all_hists = []
-		# all_hists.extend(fcs_hist)
+		all_hists.extend(fcs_hist)
 
 		# for j in range (11) :
 		# 	for i in range(len(aRectangle) * int(255/bin_size) + 1):

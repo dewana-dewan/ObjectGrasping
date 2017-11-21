@@ -189,7 +189,7 @@ def createRectangles(img, model = None):
 
 
 			if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
-				print(len(contours[0]))
+				# print(len(contours[0]))
 				continue;
 
 			if ( len(contours) == 0):

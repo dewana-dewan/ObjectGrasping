@@ -47,6 +47,9 @@ def test () :
 		lawsMasks.append(sobelEdge)
 		lawsMasks.append(cannyEdge)
 
+		fcs = focusImg(img)
+		fcs_hist = build_histogram(fcs, 10)
+
 		# for image in lawsMasks :
 		# 	plt.subplot(111),plt.imshow(image)
 		# 	plt.show()
@@ -63,7 +66,10 @@ def test () :
 		# return ;
 		# # q = PriorityQueue()
 		# # print('testing now', X)
+		
 		all_hist= []
+		all_hists.extend(fcs_hist)
+
 		for i in range(len(lawsMasks)):
 			
 			ding = np.matmul(lawsMasks[i], lawsMasks[i].transpose())
@@ -105,7 +111,7 @@ def test () :
 		cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,255,0),1)
 		pass
 	plt.imshow(complete_image)
-	plt.show()
+	plt.savefig('complete_image.png')
 
 test()
 
