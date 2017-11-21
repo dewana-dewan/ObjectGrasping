@@ -169,51 +169,51 @@ def createRectangles(img, model = None):
 	x, y, width, height = cv2.boundingRect(contours[max2])
 	roi = img[y - margin:y + height + margin, x - margin:x + width + margin]
 
-	# roi containes the focused image now.
+	# roi containes the focusImgused image now.
 	# we'll now try and create rectangles
 
 	# print(roi.shape[0], roi.shape[1])
 
 	all_for_test = []
 
-	for m in range (1, 5):
+	# for m in range (1, 5):
 
-		siz_y = int(roi.shape[1] / m)
-		siz_x = int(roi.shape[0] / m)
+	siz_y = int(roi.shape[1] / 5)
+	siz_x = int(roi.shape[0] / 5)
 
-		for i in range(0, roi.shape[0] - siz_x, 10):
-			for j in range(0, roi.shape[1] - siz_y, 10):
+	for i in range(0, roi.shape[0] - siz_x, 10):
+		for j in range(0, roi.shape[1] - siz_y, 10):
 
-				local_roi = roi[j:j + siz_y, i:i + siz_x]
-				bw_local_roi = cv2.cvtColor(local_roi,cv2.COLOR_BGR2GRAY)
+			local_roi = roi[j:j + siz_y, i:i + siz_x]
+			bw_local_roi = cv2.cvtColor(local_roi,cv2.COLOR_BGR2GRAY)
 
-				ret, thresh = cv2.threshold(bw_local_roi ,127,255,0)
-				im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+			ret, thresh = cv2.threshold(bw_local_roi ,127,255,0)
+			im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
 
-				if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
-					# print(len(contours[0]))
-					continue;
+			if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
+				# print(len(contours[0]))
+				continue;
 
-				if ( len(contours) == 0):
-					continue
+			if ( len(contours) == 0):
+				continue
 
-				# cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
+			# cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
 
-				center = (i + siz_x/2, j + siz_y/2)
-				# theta = -1 * 45
-				theta = 0
-				dings = []
-				# ding = np.array([], np.int32)
-				#print('ding')
-				# for k in range(3):
-				ding = (local_roi, ((i, j), (i + siz_x, j + siz_y)))
-				# ding = subimage(roi, center, theta, siz_x, siz_y)
-				#print (ding.shape, '------')
-				#print('ding')
-				# dings.append(ding)
-				# print (len(dings), '*********')
-				# return ;
+			center = (i + siz_x/2, j + siz_y/2)
+			# theta = -1 * 45
+			theta = 0
+			dings = []
+			# ding = np.array([], np.int32)
+			#print('ding')
+			# for k in range(3):
+			ding = (local_roi, ((i, j), (i + siz_x, j + siz_y)))
+			# ding = subimage(roi, center, theta, siz_x, siz_y)
+			#print (ding.shape, '------')
+			#print('ding')
+			# dings.append(ding)
+			# print (len(dings), '*********')
+			# return ;
 			
 
 
