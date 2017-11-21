@@ -216,7 +216,7 @@ def readImageAndTrain () :
 			gnb_loaded = cPickle.load(fid)
 		return gnb_loaded
 	'''
-	for folderName in range(2, 6) :
+	for folderName in range(2, 10) :
 		if (folderName == 9) :
 			upto = 50
 		elif folderName == 10 :
