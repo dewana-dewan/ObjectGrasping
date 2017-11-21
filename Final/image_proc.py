@@ -93,39 +93,40 @@ def applyLawsMask (img) :
 	#R5S5 = R5S5 + cv2.filter2D(R5S5,-1,kernel)
 
 	image = (E5L5 + L5E5)/2
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = (R5L5 + L5R5)/2
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = (E5S5 + S5E5)/2
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = S5S5/1.0
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = R5R5/1.0
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = (L5S5 + S5L5)/2
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = E5E5/1.0
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image)
 
 	image = (R5E5 + E5R5)/2
-	#image *= 255.0/image.max();
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	image = (S5R5 + R5S5)/2
-	#image *= 255.0/image.max();
+	image = image/1.0
+	image *= 225.0/image.max();
 	imgs.append (image);
 
 	return imgs
@@ -133,30 +134,30 @@ def applyLawsMask (img) :
 
 def sobelEdgeDetection(img):
 
-	kernel = np.ones((5,5),np.float32)/25
-	img = cv2.filter2D(img,-1,kernel)
+	# kernel = np.ones((5,5),np.float32)/25
+	# img = cv2.filter2D(img,-1,kernel)
 
-	sobelx = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
-	sobely = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
-	image = sobelx + sobely
-	image = image/image.max()
+	# sobelx = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
+	# sobely = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
+	# image = sobelx + sobely
+	# image = image/1.0
+	# image *= 25.0/image.max()
 	# plt.subplot(111),plt.imshow(sobely)
 	# plt.show()
-
+	image = cv2.Sobel (img, cv2.CV_8U, 1, 0, ksize = 5)
 	return image
 
 def cannyEdgeDetection(img):
-
+	
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	bw_edges = cv2.Canny(gray,50,100)
 
-	kernel = np.ones((3, 3), dtype=np.float64)
-	dilated = cv2.morphologyEx(bw_edges, cv2.MORPH_DILATE, kernel)
-
-
-	dilated = dilated/dilated.max()
+	# kernel = np.ones((3, 3), dtype=np.float64)
+	# dilated = cv2.morphologyEx(bw_edges, cv2.MORPH_DILATE, kernel)
+	# dilated = dilated/1.0
+	# dilated *= 1.0/dilated.max()
 
 	# plt.subplot(111),plt.imshow(dilated)
 	# plt.show()
 
-	return dilated
+	return bw_edges

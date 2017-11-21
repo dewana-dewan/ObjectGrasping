@@ -27,14 +27,16 @@ from modelling import *
 
 
 def test () :
-	#path  = '../../03/03_25/pcd0312r.png'
+	path  = '../../03/03_25/pcd0312r.png'
 	img = cv2.imread (path)
 	bw_img = cv2.imread(path, 0)
 
 	model = readImageAndTrain ();
 
-	X = createRectangles(img)
+	X, complete_image = createRectangles(img, model)
 	print(len(X), len(X[0]), len(X[0][0]))
+
+	print(model.classes_)
 
 	for image in X :
 		sobelEdge = sobelEdgeDetection(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
@@ -61,14 +63,36 @@ def test () :
 		# # q = PriorityQueue()
 		# # print('testing now', X)
 		all_hist= []
-		for i in range(11):
-			rect_hist = build_histogram(lawsMasks[0], 30)
+		for i in range(len(lawsMasks)):
+			
+			ding = np.matmul(lawsMasks[i], lawsMasks[i].transpose())
+
+			ding *= 255/ding.max()
+
+			rect_hist = build_histogram(ding, 10)
 			all_hist.extend(rect_hist)
 
 		print("Prediction Score")
+
+		plt.subplot(121),plt.imshow(complete_image)
+		plt.subplot(122),plt.imshow(image)
+		plt.show()
+
+		# from sklearn.preprocessing import MinMaxScaler
+		# from sklearn.preprocessing import StandardScaler
+		# from sklearn.preprocessing import Normalizer
+		# # scaler = MinMaxScaler(feature_range=(0, 1))
+		# # X = scaler.fit_transform(X)
+		# #print (all_hist[100])
+		# scaler = MinMaxScaler(feature_range=(0, 1))
+		# data = scaler.fit_transform(np.array([all_hist]));
 		ans = model.predict_proba(np.array([all_hist]))
+		
 		print(ans)
 
-readImageAndTrain()
+# readImageAndTrain()
+test()
+
+
 # plotData()
 # test()

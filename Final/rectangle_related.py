@@ -117,6 +117,7 @@ def getRectangles(file_name, lawsMasks):
 
 				for img in lawsMasks:
 					rect = subimage(img, (c_x, c_y), angl, wt, ht)
+
 					# plt.subplot(3,4,k+1),plt.imshow(rect)
 					# k += 1
 					# # plt.subplot(111),plt.imshow(rect)
@@ -134,7 +135,7 @@ def getRectangles(file_name, lawsMasks):
 
 	return rectangles
 
-def createRectangles(img):
+def createRectangles(img, model = None):
 	# print (img.shape)
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	# print (gray.shape)
@@ -187,40 +188,86 @@ def createRectangles(img):
 			im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
 
-			if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
-				print(len(contours[0]))
-				continue;
+			# if ( len(contours) >= 1 and len(contours[0]) <= 4 ):
+			# 	print(len(contours[0]))
+			# 	continue;
 
-			if ( len(contours) == 0):
-				continue
+			# if ( len(contours) == 0):
+			# 	continue
 
-			#cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
+			# cv2.rectangle(roi,(i, j), (i + siz_x, j + siz_y), (0,255,0),1)
 
 			center = (i + siz_x/2, j + siz_y/2)
 			# theta = -1 * 45
 			theta = 0
 			dings = []
 			# ding = np.array([], np.int32)
-			print('ding')
+			#print('ding')
 			# for k in range(3):
 			ding = subimage(roi, center, theta, siz_x, siz_y)
-			print (ding.shape, '------')
-			print('ding')
+			#print (ding.shape, '------')
+			#print('ding')
 			# dings.append(ding)
 			# print (len(dings), '*********')
 			theta += 45
 			# return ;
+			
+
+
 			# plt.subplot(231),plt.imshow(roi)
 			# plt.subplot(232),plt.imshow(local_roi)
 			# plt.subplot(233),plt.imshow(thresh)
-			#
-			# plt.subplot(234),plt.imshow(dings[0])
-			# # plt.subplot(235),plt.imshow(dings[1])
-			# # plt.subplot(236),plt.imshow(dings[2])
+			
+			# plt.subplot(234),plt.imshow(ding)
+
+
+
+			# plt.subplot(235),plt.imshow(dings[1])
+			# plt.subplot(236),plt.imshow(dings[2])
 			# plt.show()
 			# return dings
-			print(len(ding), 'akjdkjhaskdh')
+			#print(len(ding), 'akjdkjhaskdh')
+			# ding = np.matmul(ding, ding.transpose())
 			all_for_test.append(ding)
-			print('all test length', len(all_for_test))
-	return all_for_test
+			#print('all test length', len(all_for_test))
+	return all_for_test, roi
 
+
+
+def focusImg(img):
+	# print (img.shape)
+	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	# print (gray.shape)
+	bw_edges = cv2.Canny(gray,50,100)
+
+	kernel = np.ones((3, 3), np.uint8)
+	margin = 20
+	dilated = cv2.morphologyEx(bw_edges, cv2.MORPH_DILATE, kernel)
+
+	with_contours, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+	max1 = 0
+	max1_l = 0
+	max2 = 0
+	max2_l = 0
+
+	for i in range(len(contours)):
+		# print(i, len(contours[i]), max1, max2)
+		# print()
+		if max1_l <= len(contours[i]):
+			max2_l = max1_l
+			max1_l = len(contours[i])
+			max2 = max1
+			max1 = i
+		elif max2_l <= len(contours[i]):
+			max2_l = len(contours[i])
+			max2 = i
+
+	# print(max2, max1)
+
+	x, y, width, height = cv2.boundingRect(contours[max2])
+	roi = img[y - margin:y + height + margin, x - margin:x + width + margin]
+	# plt.subplot(111),plt.imshow(roi)
+	# plt.show()
+
+	return cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
