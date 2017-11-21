@@ -26,110 +26,115 @@ from image_proc import *
 from modelling import *
 
 
-def test (no) :
-	path  = '../../03/03_25/pcd0' + no + 'r.png'
-	img = cv2.imread (path)
-	bw_img = cv2.imread(path, 0)
-
+def test () :
 	model = readImageAndTrain ();
 
-	X, complete_image = createRectangles(img, model)
-	print(len(X), len(X[0]), len(X[0][0]))
+	for i in range(300, 397, 4):
+		# try:
+		print(i)
+		path  = '../../03/03_25/pcd0' + no + 'r.png'
+		img = cv2.imread (path)
+		bw_img = cv2.imread(path, 0)
 
-	print(model.classes_)
-	q = PriorityQueue()
 
-	for image in X :
-		sobelEdge = sobelEdgeDetection(cv2.cvtColor(image[0], cv2.COLOR_BGR2GRAY))
-		cannyEdge = cannyEdgeDetection (copy.deepcopy(image[0]))
-		lawsMasks = applyLawsMask(copy.deepcopy(image[0]))
+		X, complete_image = createRectangles(img, model)
+		print(len(X), len(X[0]), len(X[0][0]))
 
-		lawsMasks.append(sobelEdge)
-		lawsMasks.append(cannyEdge)
+		print(model.classes_)
+		q = PriorityQueue()
 
-		fcs = focusImg(img)
-		fcs_hist = build_histogram(fcs, 5)
+		for image in X :
+			sobelEdge = sobelEdgeDetection(cv2.cvtColor(image[0], cv2.COLOR_BGR2GRAY))
+			cannyEdge = cannyEdgeDetection (copy.deepcopy(image[0]))
+			lawsMasks = applyLawsMask(copy.deepcopy(image[0]))
 
-		# for image in lawsMasks :
-		# 	plt.subplot(111),plt.imshow(image)
-		# 	plt.show()
+			lawsMasks.append(sobelEdge)
+			lawsMasks.append(cannyEdge)
 
-		# 	x = createRectangles (image)
-		#
-		# 	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
-		# 	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
-		# 	lawsMasks = applyLawsMask(copy.deepcopy(img))
-		#
-		# 	lawsMasks.append(sobelEdge)
-		# 	lawsMasks.append(cannyEdge)
-		# 	print (len(x))
-		# return ;
-		# # q = PriorityQueue()
-		# # print('testing now', X)
-		
-		all_hist= []
-		all_hist.extend(fcs_hist)
+			fcs = focusImg(img)
+			fcs_hist = build_histogram(fcs, 5)
 
-		for i in range(len(lawsMasks)):
+			# for image in lawsMasks :
+			# 	plt.subplot(111),plt.imshow(image)
+			# 	plt.show()
+
+			# 	x = createRectangles (image)
+			#
+			# 	sobelEdge = sobelEdgeDetection(copy.deepcopy(bw_img))
+			# 	cannyEdge = cannyEdgeDetection(copy.deepcopy(img))
+			# 	lawsMasks = applyLawsMask(copy.deepcopy(img))
+			#
+			# 	lawsMasks.append(sobelEdge)
+			# 	lawsMasks.append(cannyEdge)
+			# 	print (len(x))
+			# return ;
+			# # q = PriorityQueue()
+			# # print('testing now', X)
 			
-			ding = np.matmul(lawsMasks[i], lawsMasks[i].transpose())
-			# ding = lawsMasks[i]
-			# print(ding.max())
-			if (ding.max() != 0):
-				ding *= int(255.0/float(ding.max()))
-			# print(ding.max())
+			all_hist= []
+			all_hist.extend(fcs_hist)
+
+			for i in range(len(lawsMasks)):
+				
+				ding = np.matmul(lawsMasks[i], lawsMasks[i].transpose())
+				# ding = lawsMasks[i]
+				# print(ding.max())
+				if (ding.max() != 0):
+					ding *= int(255.0/float(ding.max()))
+				# print(ding.max())
 
 
-			rect_hist = build_histogram(ding, 5)
-			all_hist.extend(rect_hist)
+				rect_hist = build_histogram(ding, 5)
+				all_hist.extend(rect_hist)
 
-		print("Prediction Score")
+			print("Prediction Score")
 
-		# plt.subplot(121),plt.imshow(complete_image)
-		# plt.subplot(122),plt.imshow(image)
-		# plt.show()
+			# plt.subplot(121),plt.imshow(complete_image)
+			# plt.subplot(122),plt.imshow(image)
+			# plt.show()
 
-		# from sklearn.preprocessing import MinMaxScaler
-		# from sklearn.preprocessing import StandardScaler
-		# from sklearn.preprocessing import Normalizer
-		# # scaler = MinMaxScaler(feature_range=(0, 1))
-		# # X = scaler.fit_transform(X)
-		# #print (all_hist[100])
-		# scaler = MinMaxScaler(feature_range=(0, 1))
-		# data = scaler.fit_transform(np.array([all_hist]));
+			# from sklearn.preprocessing import MinMaxScaler
+			# from sklearn.preprocessing import StandardScaler
+			# from sklearn.preprocessing import Normalizer
+			# # scaler = MinMaxScaler(feature_range=(0, 1))
+			# # X = scaler.fit_transform(X)
+			# #print (all_hist[100])
+			# scaler = MinMaxScaler(feature_range=(0, 1))
+			# data = scaler.fit_transform(np.array([all_hist]));
 
-		from sklearn.preprocessing import MinMaxScaler
-		from sklearn.preprocessing import StandardScaler
-		from sklearn.preprocessing import Normalizer
-		# scaler = MinMaxScaler(feature_range=(0, 1))
-		# X = scaler.fit_transform(X)
-		tempArr = np.array([all_hist])
-		scaler = StandardScaler().fit(tempArr)
-		transformedArr = scaler.transform(tempArr)
-		
-		ans = model.predict_proba(transformedArr)
-		print(ans[0][1])
-		q.put((ans[0][1], image))
+			from sklearn.preprocessing import MinMaxScaler
+			from sklearn.preprocessing import StandardScaler
+			from sklearn.preprocessing import Normalizer
+			# scaler = MinMaxScaler(feature_range=(0, 1))
+			# X = scaler.fit_transform(X)
+			tempArr = np.array([all_hist])
+			scaler = StandardScaler().fit(tempArr)
+			transformedArr = scaler.transform(tempArr)
+			
+			ans = model.predict_proba(transformedArr)
+			print(ans[0][1])
+			q.put((ans[0][1], image))
 
-# readImageAndTrain()
-	i = 6
-	while (i >=0 and not q.empty()):
-		i -= 1
-		img = q.get()
-		# print(img[0], i)
-		# print(img)
-		cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,(i*60)%255,(i*20)*100),1)
-		pass
-	#plt.imshow(complete_image)
-	#plt.show()
-	#plt.savefig('complete_image.png')
-	cv2.imwrite('complete_image' + no +'.png', complete_image)
+	# readImageAndTrain()
+		i = 6
+		while (i >=0 and not q.empty()):
+			i -= 1
+			img = q.get()
+			# print(img[0], i)
+			# print(img)
+			cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,(i*60)%255,(i*20)*100),1)
+			pass
+		#plt.imshow(complete_image)
+		#plt.show()
+		#plt.savefig('complete_image.png')
+		cv2.imwrite('complete_image' + no +'.png', complete_image)
 
-for i in range(300, 397, 4):
-	try:
-		test(str(i))
-	except:
-		print('some error')
+test()
+# for i in range(300, 397, 4):
+# 	try:
+# 		test(str(i))
+# 	except:
+# 		print('some error')
 
 # plotData()
 # test()
