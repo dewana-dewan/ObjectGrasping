@@ -32,13 +32,14 @@ def test () :
 	for i in range(300, 397, 4):
 		# try:
 		print(i)
-		path  = '../../03/03_25/pcd0' + no + 'r.png'
+		i = str(i)
+		path  = '../../03/03_25/pcd0' + i + 'r.png'
 		img = cv2.imread (path)
 		bw_img = cv2.imread(path, 0)
 
 
 		X, complete_image = createRectangles(img, model)
-		print(len(X), len(X[0]), len(X[0][0]))
+		#print(len(X), len(X[0]), len(X[0][0]))
 
 		print(model.classes_)
 		q = PriorityQueue()
@@ -78,10 +79,10 @@ def test () :
 				
 				ding = np.matmul(lawsMasks[i], lawsMasks[i].transpose())
 				# ding = lawsMasks[i]
-				# print(ding.max())
+				print(ding.max())
 				if (ding.max() != 0):
 					ding *= int(255.0/float(ding.max()))
-				# print(ding.max())
+				print(ding.max())
 
 
 				rect_hist = build_histogram(ding, 5)
@@ -101,7 +102,7 @@ def test () :
 			# #print (all_hist[100])
 			# scaler = MinMaxScaler(feature_range=(0, 1))
 			# data = scaler.fit_transform(np.array([all_hist]));
-
+			
 			from sklearn.preprocessing import MinMaxScaler
 			from sklearn.preprocessing import StandardScaler
 			from sklearn.preprocessing import Normalizer
@@ -111,8 +112,9 @@ def test () :
 			scaler = StandardScaler().fit(tempArr)
 			transformedArr = scaler.transform(tempArr)
 			
-			ans = model.predict_proba(transformedArr)
-			print(ans[0][1])
+			ans = model.predict_proba(np.array(all_hist))
+			#	print(ans)
+			print(ans.shape, len(image))
 			q.put((ans[0][1], image))
 
 	# readImageAndTrain()

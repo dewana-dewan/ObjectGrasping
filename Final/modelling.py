@@ -209,14 +209,14 @@ def trainingSVM (X, y):
 def readImageAndTrain () :
 	X = []
 	Y = []
-	'''
+	
 	import os.path
 	if os.path.isfile('svmModel.pkl') :
 		with open('svmModel.pkl', 'rb') as fid:
 			gnb_loaded = cPickle.load(fid)
 		return gnb_loaded
-	'''
-	for folderName in range(2, 10) :
+	
+	for folderName in range(2, 11) :
 		if (folderName == 9) :
 			upto = 50
 		elif folderName == 10 :

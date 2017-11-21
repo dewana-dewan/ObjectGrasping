@@ -266,11 +266,16 @@ def focusImg(img):
 			max2_l = len(contours[i])
 			max2 = i
 
-	# print(max2, max1)
+	print(max2, max1)
 
 	x, y, width, height = cv2.boundingRect(contours[max2])
+	
 	roi = img[y - margin:y + height + margin, x - margin:x + width + margin]
+	if (margin >= y or margin >= x):
+		roi = img[y:y + height, x:x + width]
 	# plt.subplot(111),plt.imshow(roi)
 	# plt.show()
 
+	
+	
 	return cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
