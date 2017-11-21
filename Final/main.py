@@ -97,7 +97,17 @@ def test (no) :
 		# #print (all_hist[100])
 		# scaler = MinMaxScaler(feature_range=(0, 1))
 		# data = scaler.fit_transform(np.array([all_hist]));
-		ans = model.predict_proba(np.array([all_hist]))
+
+		from sklearn.preprocessing import MinMaxScaler
+		from sklearn.preprocessing import StandardScaler
+		from sklearn.preprocessing import Normalizer
+		# scaler = MinMaxScaler(feature_range=(0, 1))
+		# X = scaler.fit_transform(X)
+		tempArr = np.array([all_hist])
+		scaler = StandardScaler().fit(tempArr)
+		transformedArr = scaler.transform(tempArr)
+		
+		ans = model.predict_proba(transformedArr)
 		print(ans[0][1])
 		q.put((ans[0][1], image))
 
