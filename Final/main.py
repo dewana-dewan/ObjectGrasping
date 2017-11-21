@@ -26,8 +26,8 @@ from image_proc import *
 from modelling import *
 
 
-def test () :
-	path  = '../../03/03_25/pcd0332r.png'
+def test (no) :
+	path  = '../../03/03_25/pcd0' + no + 'r.png'
 	img = cv2.imread (path)
 	bw_img = cv2.imread(path, 0)
 
@@ -74,10 +74,10 @@ def test () :
 			
 			ding = np.matmul(lawsMasks[i], lawsMasks[i].transpose())
 			# ding = lawsMasks[i]
-			print(ding.max())
-			# if (ding.max() != 0)
-			ding *= int(255.0/float(ding.max()))
-			print(ding.max())
+			# print(ding.max())
+			if (ding.max() != 0):
+				ding *= int(255.0/float(ding.max()))
+			# print(ding.max())
 
 
 			rect_hist = build_histogram(ding, 10)
@@ -102,20 +102,21 @@ def test () :
 		q.put((ans[0][1], image))
 
 # readImageAndTrain()
-	i = 4
+	i = 6
 	while (i >=0 and not q.empty()):
 		i -= 1
 		img = q.get()
-		print(img[0], i)
+		# print(img[0], i)
 		# print(img)
 		cv2.rectangle(complete_image,img[1][1][0], img[1][1][1], (0,255,0),1)
 		pass
 	#plt.imshow(complete_image)
 	#plt.show()
 	#plt.savefig('complete_image.png')
-	cv2.imwrite('complete_image.png', complete_image)
+	cv2.imwrite('complete_image' + i +'.png', complete_image)
 
-test()
+for i in range(300, 397, 4):
+	test(str(i))
 
 
 # plotData()
